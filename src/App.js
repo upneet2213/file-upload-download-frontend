@@ -1,23 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import "./App.css";
+import Authenticate from "./Authenticate";
+import jwt_decode from "jwt-decode";
+import FileUpload from "./FileUpload";
 
 function App() {
+  const [user, setUser] = useState({});
+  const handleCallbackResponse = (response) => {
+    // console.log("Encoded JWT ID token: " + response.credential);
+    var currUser = jwt_decode(response.credential);
+    fetch(`http://localhost:3000/users/${currUser.aud}`);
+
+    setUser(currUser);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {/* <FileUpload /> */}
+      {Object.keys(user).length > 0 ? (
+        <FileUpload user={user} setUser={setUser} />
+      ) : (
+        <Authenticate handleCallbackResponse={handleCallbackResponse} />
+      )}
     </div>
   );
 }
