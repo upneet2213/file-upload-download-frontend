@@ -9,7 +9,8 @@ function App() {
   const handleCallbackResponse = (response) => {
     // console.log("Encoded JWT ID token: " + response.credential);
     var currUser = jwt_decode(response.credential);
-    fetch(`http://localhost:3000/users/${currUser.aud}`);
+    console.log(currUser);
+    fetch(`http://localhost:3000/users/${currUser.email}`);
 
     setUser(currUser);
   };

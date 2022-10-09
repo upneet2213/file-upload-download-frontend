@@ -6,7 +6,9 @@ const FileUpload = ({ user, setUser }) => {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch(`http://localhost:3000/uploads/${user.aud}`);
+      const response = await fetch(
+        `http://localhost:3000/uploads/${user.email}`
+      );
       return response;
     }
     fetchData().then((res) => {
@@ -54,7 +56,7 @@ const FileUpload = ({ user, setUser }) => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/uploads/upload/${user.aud}`,
+        `http://localhost:3000/uploads/upload/${user.email}`,
         {
           body: formData,
           method: "POST",
