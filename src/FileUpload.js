@@ -14,10 +14,7 @@ const FileUpload = ({ user, setUser }) => {
     fetchData().then((res) => {
       if (res.status !== 500) {
         res.json().then((items) => {
-          const files = items.map((item) => {
-            return { id: item.filename, name: item.originalname };
-          });
-          setUploadedFiles(files);
+          setUploadedFiles(items);
         });
       }
     });
@@ -66,10 +63,7 @@ const FileUpload = ({ user, setUser }) => {
       if (response.status === 200 || response.status === 201) {
         const data = await response.json();
         console.log(data);
-        setUploadedFiles([
-          ...uploadedFiles,
-          { name: data.originalname, id: data.filename },
-        ]);
+        setUploadedFiles([...uploadedFiles, data]);
         alert("file upload successful");
       } else {
         alert("failed to upload file");
@@ -99,12 +93,13 @@ const FileUpload = ({ user, setUser }) => {
         {uploadedFiles?.map((file) => {
           return (
             <div
+              key={file.filename}
               className="bg-gray-200 w-72 h-10 border-gray cursor-pointer my-5 mx-auto flex items-center justify-center rounded-sm "
               onClick={() => {
-                downloadFile(file.id);
+                downloadFile(file.filename);
               }}
             >
-              {file.name}
+              {file.originalname}
             </div>
           );
         })}

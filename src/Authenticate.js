@@ -13,6 +13,7 @@ const Authenticate = ({ handleCallbackResponse }) => {
       size: "large",
     });
     google.accounts.id.prompt();
+    //eslint-disable-next-line
   }, []);
   return (
     <div className="flex justify-center mt-32">
