@@ -2,12 +2,18 @@ import React, { useEffect, useRef, useState } from "react";
 
 const FileUpload = ({ user, setUser }) => {
   const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [page, setPage]= useState(0)
   const fileInput = useRef();
 
   useEffect(() => {
+  fetchFiles()
+    //eslint-disable-next-line
+  }, [page]);
+
+  const fetchFiles=()=>{
     async function fetchData() {
       const response = await fetch(
-        `http://localhost:3000/uploads/${user.email}`
+        `http://localhost:3000/uploads?userId=${user.email}&skip=${page*2}&limit=2`
       );
       return response;
     }
@@ -18,8 +24,7 @@ const FileUpload = ({ user, setUser }) => {
         });
       }
     });
-    //eslint-disable-next-line
-  }, []);
+  }
 
   const downloadFile = async (file) => {
     try {
@@ -63,7 +68,8 @@ const FileUpload = ({ user, setUser }) => {
       if (response.status === 200 || response.status === 201) {
         const data = await response.json();
         console.log(data);
-        setUploadedFiles([...uploadedFiles, data]);
+        // setUploadedFiles([...uploadedFiles, data]);
+        fetchFiles()
         alert("file upload successful");
       } else {
         alert("failed to upload file");
@@ -74,6 +80,8 @@ const FileUpload = ({ user, setUser }) => {
     }
   };
   return (
+    <div>
+
     <div className="mt-8 overflow-auto">
       <form onSubmit={(e) => handleSubmit(e, this)} ref={fileInput}>
         <input
@@ -90,7 +98,7 @@ const FileUpload = ({ user, setUser }) => {
       </form>
 
       <div>
-        {uploadedFiles?.map((file) => {
+        {uploadedFiles?.files?.map((file) => {
           return (
             <div
               key={file.filename}
@@ -110,6 +118,15 @@ const FileUpload = ({ user, setUser }) => {
       >
         Log Out
       </button>
+    </div>
+    <div className="mt-10 flex flex-col">
+      <span>Page {page+1}/{Math.ceil(uploadedFiles.total/2)}</span>
+      <div className="flex justify-center mt-5">
+
+      {uploadedFiles.total>=(page+1)*2&&<button className="bg-gray-500 px-8 py-3 mr-5" onClick={()=>setPage(page+1)}>Next</button>}
+     { page>0&&<button className="bg-gray-500 px-8 py-3" onClick={()=>setPage(page-1)}>Prev</button>}
+      </div>
+    </div>
     </div>
   );
 };
